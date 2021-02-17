@@ -25,6 +25,10 @@ Entradas: Ninguna
 Salidas: Objetos
 Comentarios: 
 """
+from datetime import datetime 
+
+
+
 class informacion:
     
     # Inner clases 
@@ -43,11 +47,75 @@ class informacion:
         nombre = ''
         ubicacion = ''
         ruta = ''
+        extension = ''
+        
+        # Detalles
+        num_honas = 1
+        nom_hojas = ['Hoja 1']
+        # Ubicación de la información
+        class columnas():
+            nombre = ''
+            superior = ''
+            categoria = ''
+            numero_empleado = ''
+            hora_entrada = ''
+            hora_salida = ''
+            retardo = ''
+            tiempo_ext = ''
+            jornada = ''
+            observaciones = ''
+        class renglones():
+            actual = 0
+            titulos = 1
+            inicial = 2
+        class celdas():
+            nombre = ''
+            superior = ''
+            categoria = ''
+            numero_empleado = ''
+            hora_entrada = ''
+            hora_salida = ''
+            retardo = ''
+            tiempo_extr = ''
+            jornada = ''
+            observaciones = ''
+            
+
         def __init__(self, nombre):
             self.nombre = nombre.title()
-        def __ubicacion__(self, ubicacion):
+        def __ubicacion__(self, ubicacion, extension):
             self.ubicacion = ubicacion
-            self.ruta = ubicacion + '\\' + self.nombre
+            self.extension = extension
+            self.ruta = ubicacion + '\\' + self.nombre + self.extension
+        def siguiente_renglón(self):
+            if self.renglones.actual == 0:
+                self.renglones.actual = self.renglones.inicial
+            else:
+                self.renglones.actual += 1
+            self.generando_celdas_actuales ()
+        
+        def generando_celdas_actuales(self):
+            renglon_actual_str = str(self.renglones.actual)
+            # En objetos string
+            self.celdas.nombre = self.columnas.nombre + renglon_actual_str
+            self.celdas.superior = self.columnas.superior + renglon_actual_str
+            self.celdas.categoria = self.columnas.categoria + renglon_actual_str
+            self.celdas.numero_empleado = self.columnas.numero_empleado + renglon_actual_str
+            self.celdas.hora_entrada = self.columnas.hora_entrada + renglon_actual_str
+            self.celdas.hora_salida = self.columnas.hora_salida + renglon_actual_str
+            self.celdas.retardo = self.columnas.retardo + renglon_actual_str
+            self.celdas.tiempo_extr = self.columnas.tiempo_ext + renglon_actual_str
+            self.celdas.jornada = self.columnas.jornada + renglon_actual_str
+            self.celdas.observaciones =  self.columnas.observaciones + renglon_actual_str
+            
+            
+        
+        
+        
+    class fecha:
+        formato = '%d-%m-%y'
+        plazo_historial_dias = 30
+        hoy = datetime.today()
         
     
         
@@ -70,6 +138,8 @@ class informacion:
     c_ra = carpeta('reportes')
     c_ra_actual = carpeta('reporte actual')
     c_ra_historial = carpeta('hitorial de reportes')
+    # Instanciando nuestro objeto fechas
+    fechas = fecha()
     
     
     # Funciones de la Outer Class
@@ -88,13 +158,52 @@ class informacion:
         self.c_ra_historial.__ubicacion__(self.c_ra.ruta)
         
         # Definiendo la ubicación de los archivos del segundo nivel
-        self.bd.__ubicacion__(self.c_bd.ruta)
-        self.le.__ubicacion__(self.c_le.ruta)
+        self.bd.__ubicacion__(self.c_bd.ruta, '.xlsx')
+        self.le.__ubicacion__(self.c_le.ruta, '.xlsx')
         # Definiendo la ubicación de los archivos del tercer nivel
-        self.la1.__ubicacion__(self.c_la_hoy.ruta)
-        self.la2.__ubicacion__(self.c_la_ayer.ruta)
-        self.ra_e.__ubicacion__(self.c_ra_actual.ruta)
-        self.ra_pdf.__ubicacion__(self.c_ra_actual.ruta)
+        self.la1.__ubicacion__(self.c_la_hoy.ruta, '.xlsx')
+        self.la2.__ubicacion__(self.c_la_ayer.ruta, '.xlsx')
+        self.ra_e.__ubicacion__(self.c_ra_actual.ruta, '.xlsx')
+        self.ra_pdf.__ubicacion__(self.c_ra_actual.ruta, '.pdf')
 
 
 
+
+
+
+
+
+
+
+class trabajador:
+    nombre = ''
+    apellido_1 = ''
+    apellido_2 = ''
+    nombre_completo = ''
+    
+    superior = ''
+    categoria = ''
+    numero_empleado = ''
+    
+    hora_entrada = ''
+    hora_salida = ''
+    retardo = ''
+    tiempo_extra = ''
+    jornada_laboral = ''
+    observaciones = ''
+    
+    
+    def __init__(self, numero_empleado, nombre_completo, categoria):
+        [self.apellido1, self.apellido2, self.nombre] = nombre_completo.split()
+        self.numero_empleado = numero_empleado
+        self.nombre_completo = nombre_completo
+        self.categoria = categoria
+
+
+        
+    
+    
+    
+    
+    
+    
