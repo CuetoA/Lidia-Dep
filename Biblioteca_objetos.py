@@ -31,6 +31,20 @@ from datetime import datetime
 
 class informacion:
     
+    anotaciones_generales = []
+    anotaciones_generales.append('TC')
+    anotaciones_generales.append('TE')
+    anotaciones_generales.append('E')
+    
+    class horarios:
+        entrada_regular = 800
+        salida_regular = 1800
+        entrada_temprano = 700
+        salida_tarde = 2000
+        tiempo_cuadro = 1200
+        tiempo_regular = 800
+        
+    
     # Inner clases 
     class carpeta:
         nombre = ''
@@ -64,10 +78,39 @@ class informacion:
             tiempo_ext = ''
             jornada = ''
             observaciones = ''
+            
+            nombre_tit = 'NOMBRE'
+            superior_tit = 'SUPERIOR'
+            categoria_tit = 'CATEGORÍA'
+            numero_empleado_tit = 'NUMEMP'
+            hora_entrada_tit = 'ENTRADA'
+            hora_salida_tit = 'SALIDA'
+            retardo_tit = 'RETARDO'
+            tiempo_ext_tit = 'TIEMP EXTRA'
+            jornada_tit = 'TIPO JORNADA'
+            observaciones_tit = 'OBSERVACIONES'
+            nombre_comb = ''
+            superior_comb = ''
+            categoria_comb = ''
+            numero_empleado_comb = ''
+            hora_entrada_comb = ''
+            hora_salida_comb = ''
+            retardo_comb = ''
+            tiempo_ext_comb = ''
+            jornada_comb = ''
+            observaciones_comb = ''
+            
+            def __init__(self):
+                pass
+            
         class renglones():
             actual = 0
             titulos = 1
             inicial = 2
+            anotacion_general = 2
+            def __init__(self):
+                pass
+            
         class celdas():
             nombre = ''
             superior = ''
@@ -79,6 +122,9 @@ class informacion:
             tiempo_extr = ''
             jornada = ''
             observaciones = ''
+            def __init__(self):
+                pass
+        
             
 
         def __init__(self, nombre):
@@ -97,6 +143,8 @@ class informacion:
         def generando_celdas_actuales(self):
             renglon_actual_str = str(self.renglones.actual)
             # En objetos string
+            #print('columnas superior',self.columnas.superior )
+            #print('renglon actual', renglon_actual_str)
             self.celdas.nombre = self.columnas.nombre + renglon_actual_str
             self.celdas.superior = self.columnas.superior + renglon_actual_str
             self.celdas.categoria = self.columnas.categoria + renglon_actual_str
@@ -122,11 +170,35 @@ class informacion:
   
     # Nombre de los archivos
     le = archivo('lista empleados')
+    le.celdas = archivo.celdas()
+    le.renglones = archivo.renglones()
+    le.columnas = archivo.columnas()
+    
     bd = archivo('base de datos')
+    bd.celdas = archivo.celdas()
+    bd.renglones = archivo.renglones()
+    bd.columnas = archivo.columnas()
+    
     la1 = archivo('lista de asistencia')
+    la1.celdas = archivo.celdas()
+    la1.renglones = archivo.renglones()
+    la1.columnas = archivo.columnas()
+    
     la2 = archivo('lista de asistencia')
+    la2.celdas = archivo.celdas()
+    la2.renglones = archivo.renglones()
+    la2.columnas = archivo.columnas()
+    
     ra_e = archivo('reporte de asistencia')
+    ra_e.celdas = archivo.celdas()
+    ra_e.renglones = archivo.renglones()
+    ra_e.columnas = archivo.columnas()
+    
     ra_pdf = archivo('reporte de asistencia')
+    ra_pdf.celdas = archivo.celdas()
+    ra_pdf.renglones = archivo.renglones()
+    ra_pdf.columnas = archivo.columnas()
+    
     # Nombre de las carpetas
     cr = ''
     c_lidiadep = carpeta('lidia-dep')
@@ -192,12 +264,42 @@ class trabajador:
     jornada_laboral = ''
     observaciones = ''
     
+    # Errores al momento de analizar los datos
+    error_datos_inesperados = False
+    revision_manual = False
+    
+    # Esquemas generales para todos los trabajadores
+    aplicar_esuqema_general_entrada = False
+    aplicar_esuqema_general_salida = False
+    esquema_gral_entrada = ''
+    esquema_gral_salida = ''
+    
+    
+    
     
     def __init__(self, numero_empleado, nombre_completo, categoria):
-        [self.apellido1, self.apellido2, self.nombre] = nombre_completo.split()
+        #[self.apellido1, self.apellido2, self.nombre] = nombre_completo.split()
         self.numero_empleado = numero_empleado
         self.nombre_completo = nombre_completo
         self.categoria = categoria
+    def clear(self):
+        self.nombre = ''
+        self.apellido_1 = ''
+        self.apellido_2 = ''
+        self.nombre_completo = ''
+        
+        self.superior = ''
+        self.categoria = ''
+        self.numero_empleado = ''
+        
+        self.hora_entrada = ''
+        self.hora_salida = ''
+        self.retardo = ''
+        self.tiempo_extra = ''
+        self.jornada_laboral = ''
+        self.observaciones = ''
+        self.error_datos_inesperados = False
+        self.revision_manual = False
 
 
         
