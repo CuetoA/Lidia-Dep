@@ -30,6 +30,7 @@ def lectura_documentos (bandera, archivo):
     # Iterando entre hojas
     hojas = wb.sheetnames
     for hoja in hojas:
+        
         # Leer hoja bd
         ws = wb[hoja]
         
@@ -41,23 +42,84 @@ def lectura_documentos (bandera, archivo):
 
 def lectura_hoja_bd(ws, archivo, diccionario, b_cel):
     # b_cel : bandera de celdas
-    # Declaramos la salida
+    # Inicializamos contadores
     espacios_en_blanco = 0 
     sin_matricula_contador = 0
+    
+    # Leeremos el renglón de anotaciones generales
+    esquema_general = lectura_renglon_anotaciones(ws, archivo)
+    
+    
+    
     # Iteramos entre los renglones obteniendo los datos
     while espacios_en_blanco < 10:
         archivo.siguiente_renglón()
-        archivo.generando_celdas_actuales()
+        #archivo.generando_celdas_actuales()
         
-        diccionario, espacios_en_blanco, sin_matricula_contador = lectura_renglon(ws, archivo, diccionario, b_cel, espacios_en_blanco, sin_matricula_contador)
-        # Fin del while espacios en blanco < 10
-
-        
+        diccionario, espacios_en_blanco, sin_matricula_contador = lectura_renglon(ws, archivo, diccionario, b_cel, espacios_en_blanco, sin_matricula_contador, esquema_general)
+    
     return diccionario
 
-def lectura_renglon(ws, archivo, diccionario_bd, b_cel, espacios_en_blanco, sin_matricula_contador):
-    # Declarador del objeto trabajador
-    trabajador_n = trabajador
+
+def lectura_renglon_anotaciones(ws, archivo):
+    # Solo se aplicará si es bd, sino, retornará con funciones vacías
+    if archivo is not informacion.la1:
+        gral_entrada_str = ''
+        gral_salida_str = ''
+    
+        bandera_gral_entrada = False
+        bandera_gral_salida = False
+        lista_entrada = [bandera_gral_entrada, gral_entrada_str]
+        lista_salida = [bandera_gral_salida,gral_salida_str]
+        
+        esquema_general = {'entrada': lista_entrada , 'salida': lista_salida}
+        return esquema_general
+    
+    
+    renglon = str(archivo.renglones.anotacion_general)
+    col_entrada = archivo.columnas.hora_entrada
+    col_salida = archivo.columnas.hora_salida
+    
+    print('col_entrada: \t', col_entrada)
+    print('col_salida: \t', col_salida)
+    print('renglon: \t', renglon)
+    
+    gral_entrada_str = str(ws[col_entrada + renglon].value)
+    gral_salida_str = str(ws[col_salida + renglon].value)
+    
+    bandera_gral_entrada = gral_entrada_str != ''
+    bandera_gral_salida = gral_salida_str != ''
+    
+    lista_entrada = [bandera_gral_entrada, gral_entrada_str]
+    lista_salida = [bandera_gral_salida,gral_salida_str]
+    
+    esquema_general = {'entrada': lista_entrada , 'salida': lista_salida}
+    
+    return esquema_general
+    
+
+
+def lectura_renglon(ws, archivo, diccionario_bd, b_cel, espacios_en_blanco, sin_matricula_contador, esquema_general):
+    # Instanciando objeto trabajador
+    trabajador_n = trabajador('', '', '')
+    
+    
+    # Desempacando banderas y esquemas de trabajo
+    lista_entrada = esquema_general['entrada']
+    lista_salida = esquema_general['salida']
+    
+    bandera_gral_entrada = lista_entrada[0]
+    gral_entrada_str = lista_entrada[1]
+    bandera_gral_salida = lista_salida[0]
+    gral_salida_str = lista_salida[1]
+    
+    #  Obteneiendo los esquemas generales del empleado
+    trabajador_n.aplicar_esuqema_general_entrada = bandera_gral_entrada
+    trabajador_n.aplicar_esuqema_general_salida = bandera_gral_salida
+    trabajador_n.esquema_gral_entrada = gral_entrada_str
+    trabajador_n.esquema_gral_salida = gral_salida_str
+    
+    
     # Declaración banderas de vacio
     celda_numero_empleado_vacia = True
     celda_nombre_vacia = True
@@ -70,47 +132,48 @@ def lectura_renglon(ws, archivo, diccionario_bd, b_cel, espacios_en_blanco, sin_
     celda_observaciones_vacia = True
     celda_superior_vacia = True
     
-    # Condiciones de lectura
+    
+    # Obteniendo los datos del empleado según sus Condiciones de lectura
     if b_cel[0]: 
         celda_numero_empleado = ws[archivo.celdas.numero_empleado]
         celda_numero_empleado_vacia = celda_numero_empleado.value is None
-        if not celda_numero_empleado_vacia: trabajador_n.numero_empleado = celda_numero_empleado.value
+        if not celda_numero_empleado_vacia: trabajador_n.numero_empleado = str(celda_numero_empleado.value)
     if b_cel[1]:
         celda_nombre = ws[archivo.celdas.nombre]
         celda_nombre_vacia = celda_nombre.value is None
-        if not celda_nombre_vacia: trabajador_n.nombre_completo = celda_nombre.value
+        if not celda_nombre_vacia: trabajador_n.nombre_completo = str(celda_nombre.value)
     if b_cel[2]:
         celda_categoria = ws[archivo.celdas.categoria]
         celda_categoria_vacia = celda_categoria.value is None
-        if not celda_categoria_vacia: trabajador_n.categoria = celda_categoria.value
+        if not celda_categoria_vacia: trabajador_n.categoria = str(celda_categoria.value)
     if b_cel[3]:
         celda_hora_entrada = ws[archivo.celdas.hora_entrada]
         celda_hora_entrada_vacia = celda_hora_entrada.value is None
-        if not celda_hora_entrada_vacia: trabajador_n.hora_entrada = celda_hora_entrada.value
+        if not celda_hora_entrada_vacia: trabajador_n.hora_entrada = str(celda_hora_entrada.value)
     if b_cel[4]:
         celda_hora_salida = ws[archivo.celdas.hora_salida]
         celda_hora_salida_vacia = celda_hora_salida.value is None
-        if not celda_hora_salida_vacia: trabajador_n.hora_salida = celda_hora_salida.value
+        if not celda_hora_salida_vacia: trabajador_n.hora_salida = str(celda_hora_salida.value)
     if b_cel[5]:
         celda_retardo = ws[archivo.celdas.retardo]
         celda_retardo_vacia = celda_retardo.value is None
-        if not celda_retardo_vacia: trabajador_n.retardo = celda_retardo.value
+        if not celda_retardo_vacia: trabajador_n.retardo = str(celda_retardo.value)
     if b_cel[6]:
         celda_tiempo_extr = ws[archivo.celdas.tiempo_extr] 
         celda_tiempo_extr_vacia = celda_tiempo_extr.value is None
-        if not celda_tiempo_extr_vacia: trabajador_n.tiempo_extr = celda_tiempo_extr.value
+        if not celda_tiempo_extr_vacia: trabajador_n.tiempo_extr = str(celda_tiempo_extr.value)
     if b_cel[7]:
         celda_jornada = ws[archivo.celdas.jornada] 
         celda_jornada_vacia = celda_jornada.value is None
-        if not celda_jornada_vacia: trabajador_n.jornada = celda_jornada.value
+        if not celda_jornada_vacia: trabajador_n.jornada = str(celda_jornada.value)
     if b_cel[8]:
         celda_observaciones = ws[archivo.celdas.observaciones] 
         celda_observaciones_vacia = celda_observaciones.value is None
-        if not celda_observaciones_vacia: trabajador_n.observaciones = celda_observaciones.value
+        if not celda_observaciones_vacia: trabajador_n.observaciones = str(celda_observaciones.value)
     if b_cel[9]:
         celda_superior = ws[archivo.celdas.superior] 
         celda_superior_vacia = celda_superior.value is None
-        if not celda_superior_vacia: trabajador_n.superior = celda_superior.value
+        if not celda_superior_vacia: trabajador_n.superior = str(celda_superior.value)
     
     # si todas las celdas están vacías se aumenta el contador de espacios vacíos
     bandera1 = celda_numero_empleado_vacia and celda_nombre_vacia and celda_categoria_vacia
@@ -131,6 +194,10 @@ def lectura_renglon(ws, archivo, diccionario_bd, b_cel, espacios_en_blanco, sin_
         llave = trabajador_n.numero_empleado
     valor = trabajador_n
     diccionario_bd[llave] = valor
+    
+    trabajador_n.clear
+    trabajador.clear
+    
     return diccionario_bd, espacios_en_blanco, sin_matricula_contador
 
     
